@@ -3,91 +3,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const context = canvas.getContext('2d');
 
   const gridSize = 20;
-  const width = 600;
-  const height = 400;
+  const width = canvas.width;
+  const height = canvas.height;
 
   let snake = [{ x: 200, y: 200 }];
-  let food = {};
   let dx = gridSize;
   let dy = 0;
-  let score = 0;
 
-  function createFood() {
-    food = {
-      x: Math.floor(Math.random() * (width / gridSize)) * gridSize,
-      y: Math.floor(Math.random() * (height / gridSize)) * gridSize
-    };
+  function drawRect(x, y, color) {
+    context.fillStyle = color;
+    context.fillRect(x, y, gridSize, gridSize);
+    context.strokeStyle = '#000';
+    context.strokeRect(x, y, gridSize, gridSize);
   }
 
   function drawSnake() {
-    snake.forEach((segment, index) => {
-      const gradient = context.createLinearGradient(segment.x, segment.y, segment.x + gridSize, segment.y + gridSize);
-      gradient.addColorStop(0, index === 0 ? '#ffaa00' : '#ffd700');
-      gradient.addColorStop(1, index === 0 ? '#ffdd55' : '#ffd700');
-
-      context.fillStyle = gradient;
-      context.fillRect(segment.x, segment.y, gridSize, gridSize);
-      context.strokeStyle = '#000';
-      context.strokeRect(segment.x, segment.y, gridSize, gridSize);
+    snake.forEach(segment => {
+      drawRect(segment.x, segment.y, '#00ff00');
     });
-  }
-
-  function drawFood() {
-    context.fillStyle = '#ff0000';
-    context.fillRect(food.x, food.y, gridSize, gridSize);
-    context.strokeStyle = '#000';
-    context.strokeRect(food.x, food.y, gridSize, gridSize);
-  }
-
-  function moveSnake() {
-    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-    snake.unshift(head);
-
-    if (head.x === food.x && head.y === food.y) {
-      score++;
-      createFood();
-    } else {
-      snake.pop();
-    }
   }
 
   function clearCanvas() {
     context.clearRect(0, 0, width, height);
   }
 
-  function drawScore() {
-    context.fillStyle = '#fff';
-    context.font = '20px Arial';
-    context.fillText(`Score: ${score}`, 10, 20);
-  }
-
-  function gameOver() {
-    clearInterval(gameLoop);
-    context.fillStyle = '#fff';
-    context.font = '40px Arial';
-    context.fillText('Game Over', width / 2 - 100, height / 2);
-  }
-
-  function checkCollision() {
-    const head = snake[0];
-    if (
-      head.x < 0 ||
-      head.x >= width ||
-      head.y < 0 ||
-      head.y >= height ||
-      snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
-    ) {
-      gameOver();
-    }
+  function moveSnake() {
+    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+    snake.unshift(head);
+    snake.pop();
   }
 
   function update() {
     clearCanvas();
     drawSnake();
-    drawFood();
-    drawScore();
     moveSnake();
-    checkCollision();
   }
 
   function handleKeyPress(event) {
@@ -119,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  createFood();
-  const gameLoop = setInterval(update, 100);
+  setInterval(update, 100);
   document.addEventListener('keydown', handleKeyPress);
 });
