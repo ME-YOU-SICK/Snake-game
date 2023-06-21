@@ -8,39 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let snake = [{ x: 200, y: 200 }];
   let food = {};
-  let powerUp = {};
-  let obstacles = [];
   let dx = gridSize;
   let dy = 0;
   let score = 0;
-  let highScore = localStorage.getItem('snakeHighScore') || 0;
 
   function createFood() {
-    food = generateRandomPosition();
-  }
-
-  function createPowerUp() {
-    powerUp = generateRandomPosition();
-  }
-
-  function createObstacles() {
-    for (let i = 0; i < 3; i++) {
-      obstacles.push(generateRandomPosition());
-    }
-  }
-
-  function generateRandomPosition() {
-    return {
+    food = {
       x: Math.floor(Math.random() * (width / gridSize)) * gridSize,
       y: Math.floor(Math.random() * (height / gridSize)) * gridSize
     };
-  }
-
-  function drawRect(x, y, color) {
-    context.fillStyle = color;
-    context.fillRect(x, y, gridSize, gridSize);
-    context.strokeStyle = '#000';
-    context.strokeRect(x, y, gridSize, gridSize);
   }
 
   function drawSnake() {
@@ -49,22 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
       gradient.addColorStop(0, index === 0 ? '#ffaa00' : '#ffd700');
       gradient.addColorStop(1, index === 0 ? '#ffdd55' : '#ffd700');
 
-      drawRect(segment.x, segment.y, gradient);
+      context.fillStyle = gradient;
+      context.fillRect(segment.x, segment.y, gridSize, gridSize);
+      context.strokeStyle = '#000';
+      context.strokeRect(segment.x, segment.y, gridSize, gridSize);
     });
   }
 
   function drawFood() {
-    drawRect(food.x, food.y, '#ff0000');
-  }
-
-  function drawPowerUp() {
-    drawRect(powerUp.x, powerUp.y, '#00ffff');
-  }
-
-  function drawObstacles() {
-    obstacles.forEach(obstacle => {
-      drawRect(obstacle.x, obstacle.y, '#ff00ff');
-    });
+    context.fillStyle = '#ff0000';
+    context.fillRect(food.x, food.y, gridSize, gridSize);
+    context.strokeStyle = '#000';
+    context.strokeRect(food.x, food.y, gridSize, gridSize);
   }
 
   function moveSnake() {
@@ -77,15 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       snake.pop();
     }
-
-    if (head.x === powerUp.x && head.y === powerUp.y) {
-      score += 5;
-      createPowerUp();
-    }
-
-    if (obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y)) {
-      gameOver();
-    }
   }
 
   function clearCanvas() {
@@ -96,19 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
     context.fillStyle = '#fff';
     context.font = '20px Arial';
     context.fillText(`Score: ${score}`, 10, 20);
-    context.fillText(`High Score: ${highScore}`, 10, 40);
-  }
-
-  function saveHighScore() {
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem('snakeHighScore', highScore);
-    }
   }
 
   function gameOver() {
     clearInterval(gameLoop);
-    saveHighScore();
     context.fillStyle = '#fff';
     context.font = '40px Arial';
     context.fillText('Game Over', width / 2 - 100, height / 2);
@@ -131,8 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     clearCanvas();
     drawSnake();
     drawFood();
-    drawPowerUp();
-    drawObstacles();
     drawScore();
     moveSnake();
     checkCollision();
@@ -168,8 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   createFood();
-  createPowerUp();
-  createObstacles();
   const gameLoop = setInterval(update, 100);
   document.addEventListener('keydown', handleKeyPress);
 });
