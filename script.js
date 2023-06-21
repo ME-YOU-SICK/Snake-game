@@ -39,35 +39,31 @@ document.addEventListener('DOMContentLoaded', () => {
     moveSnake();
   }
 
-  function handleKeyPress(event) {
-    const LEFT_KEY = 37;
-    const RIGHT_KEY = 39;
-    const UP_KEY = 38;
-    const DOWN_KEY = 40;
+  function handleMouseMove(event) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
 
-    const keyPressed = event.keyCode;
+    const headX = snake[0].x;
+    const headY = snake[0].y;
 
-    if (keyPressed === LEFT_KEY && dx !== gridSize) {
+    if (mouseX > headX && dx !== -gridSize) {
+      dx = gridSize;
+      dy = 0;
+    } else if (mouseX < headX && dx !== gridSize) {
       dx = -gridSize;
       dy = 0;
     }
 
-    if (keyPressed === RIGHT_KEY && dx !== -gridSize) {
-      dx = gridSize;
-      dy = 0;
-    }
-
-    if (keyPressed === UP_KEY && dy !== gridSize) {
-      dx = 0;
-      dy = -gridSize;
-    }
-
-    if (keyPressed === DOWN_KEY && dy !== -gridSize) {
+    if (mouseY > headY && dy !== -gridSize) {
       dx = 0;
       dy = gridSize;
+    } else if (mouseY < headY && dy !== gridSize) {
+      dx = 0;
+      dy = -gridSize;
     }
   }
 
   setInterval(update, 100);
-  document.addEventListener('keydown', handleKeyPress);
+  canvas.addEventListener('mousemove', handleMouseMove);
 });
