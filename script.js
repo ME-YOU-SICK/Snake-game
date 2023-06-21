@@ -24,11 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createObstacles() {
-    obstacles = [
-      generateRandomPosition(),
-      generateRandomPosition(),
-      generateRandomPosition()
-    ];
+    for (let i = 0; i < 3; i++) {
+      obstacles.push(generateRandomPosition());
+    }
   }
 
   function generateRandomPosition() {
@@ -38,39 +36,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function drawRect(x, y, color) {
+    context.fillStyle = color;
+    context.fillRect(x, y, gridSize, gridSize);
+    context.strokeStyle = '#000';
+    context.strokeRect(x, y, gridSize, gridSize);
+  }
+
   function drawSnake() {
     snake.forEach((segment, index) => {
       const gradient = context.createLinearGradient(segment.x, segment.y, segment.x + gridSize, segment.y + gridSize);
       gradient.addColorStop(0, index === 0 ? '#ffaa00' : '#ffd700');
       gradient.addColorStop(1, index === 0 ? '#ffdd55' : '#ffd700');
 
-      context.fillStyle = gradient;
-      context.fillRect(segment.x, segment.y, gridSize, gridSize);
-      context.strokeStyle = '#000';
-      context.strokeRect(segment.x, segment.y, gridSize, gridSize);
+      drawRect(segment.x, segment.y, gradient);
     });
   }
 
   function drawFood() {
-    context.fillStyle = '#ff0000';
-    context.fillRect(food.x, food.y, gridSize, gridSize);
-    context.strokeStyle = '#000';
-    context.strokeRect(food.x, food.y, gridSize, gridSize);
+    drawRect(food.x, food.y, '#ff0000');
   }
 
   function drawPowerUp() {
-    context.fillStyle = '#00ffff';
-    context.fillRect(powerUp.x, powerUp.y, gridSize, gridSize);
-    context.strokeStyle = '#000';
-    context.strokeRect(powerUp.x, powerUp.y, gridSize, gridSize);
+    drawRect(powerUp.x, powerUp.y, '#00ffff');
   }
 
   function drawObstacles() {
-    context.fillStyle = '#ff00ff';
     obstacles.forEach(obstacle => {
-      context.fillRect(obstacle.x, obstacle.y, gridSize, gridSize);
-      context.strokeStyle = '#000';
-      context.strokeRect(obstacle.x, obstacle.y, gridSize, gridSize);
+      drawRect(obstacle.x, obstacle.y, '#ff00ff');
     });
   }
 
