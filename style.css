@@ -3,13 +3,10 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #000;
+  background-color: #222;
+  margin: 0;
 }
 
-#game-container {
-  border: 2px solid #fff;
-}
-
-#game-canvas {
-  background-color: #000;
+canvas {
+  border: 1px solid #fff;
 }
